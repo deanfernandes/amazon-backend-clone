@@ -2,6 +2,6 @@
 
 ## TODO:
 
-- db, seed, sql, postgresql
 - api, rest
+- db, seed, sql, postgresql
 - testing, unit, integration, mocking, automated, jest
