@@ -1,8 +1,9 @@
 # REQUIREMENTS
 
-- users can register/login account (email + password)
+- users can register/login+logout account (email + password)
 - users must verify email
-- users can reset passwords via email
+- users can resend verification code
+- users can reset passwords via email if forgotten
 - user can have multiple addresses
 - users can have multiple payment methods e.g. credit card, paypal
 - users have a basket
