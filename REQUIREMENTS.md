@@ -1,0 +1,21 @@
+# REQUIREMENTS
+
+- users can register/login account (email + password)
+- users must verify email
+- users can reset passwords via email
+- user can have multiple addresses
+- users can have multiple payment methods e.g. credit card, paypal
+- users have a basket
+- users have a wishlist/favorites
+- users can buy/order products
+- order confirmation emails are sent to users
+- users can view order history
+- users can sell products
+- products can be filtered/sorted/paginated
+- products have name, description, price, stock/inventory, images
+- products can have options e.g. size/color
+- products have different categories
+- users can subscribe to prime (free delivery)
+- subscriptions have different plans e.g. monthly, annually
+- users can review/rate products
+- users can select different delivery options e.g. standard, premium
