@@ -1,10 +1,6 @@
 import type { Request, Response } from "express";
 import pool from "../db.js";
-import type {
-  CreateUserDto,
-  GetUserDto,
-  UpdateUserDto,
-} from "../dtos/index.js";
+import type { CreateUserDto, GetUserDto, UpdateUserDto } from "../dtos/user.js";
 import bcrypt from "bcrypt";
 
 export async function createUserHandler(req: Request, res: Response) {

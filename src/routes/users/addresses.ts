@@ -1,11 +1,18 @@
 import { Router } from "express";
+import {
+  postUserAddressHandler,
+  getUserAddressesHandler,
+  getUserAddressHandler,
+  putUserAddressHandler,
+  deleteUserAddressHandler,
+} from "../../controllers/users/addresses.js";
 
 const router = Router({ mergeParams: true });
-router.post("/", (req, res) => {});
-router.get("/", (req, res) => {});
-router.get("/:id", (req, res) => {});
-router.put("/:id", (req, res) => {});
+router.post("/", postUserAddressHandler);
+router.get("/", getUserAddressesHandler);
+router.get("/:id", getUserAddressHandler);
+router.put("/:id", putUserAddressHandler);
 router.patch("/:id", (req, res) => {});
-router.delete("/:id", (req, res) => {});
+router.delete("/:id", deleteUserAddressHandler);
 
 export default router;
