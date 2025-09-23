@@ -1,10 +1,10 @@
 import type { Request, Response } from "express";
-import pool from "../db.js";
-import type { CreateUserDto, GetUserDto, UpdateUserDto } from "../dtos/user.js";
+import pool from "../../db.js";
+import type { PostUserDto, GetUserDto, PutUserDto } from "../../dtos/user.js";
 import bcrypt from "bcrypt";
 
-export async function createUserHandler(req: Request, res: Response) {
-  const user: CreateUserDto = req.body;
+export async function postUserHandler(req: Request, res: Response) {
+  const user: PostUserDto = req.body;
 
   if (!user || !user.email || !user.password || !user.name) {
     return res.status(400).send();
@@ -65,14 +65,14 @@ export async function getUserHandler(req: Request, res: Response) {
   }
 }
 
-export async function updateUserHandler(req: Request, res: Response) {
+export async function putUserHandler(req: Request, res: Response) {
   const id = req.params.id;
 
   if (!id) {
     return res.status(400).send();
   }
 
-  const user: UpdateUserDto = req.body;
+  const user: PutUserDto = req.body;
 
   if (!user || !user.email || !user.password || !user.name) {
     return res.status(400).send();

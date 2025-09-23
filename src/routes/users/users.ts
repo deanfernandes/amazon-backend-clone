@@ -3,18 +3,18 @@ import addressesRouter from "./addresses.js";
 import paymentMethodsRouter from "./payment-methods.js";
 import wishlistRouter from "./wishlist.js";
 import {
-  createUserHandler,
+  postUserHandler,
   getUsersHandler,
   getUserHandler,
-  updateUserHandler,
+  putUserHandler,
   deleteUserHandler,
-} from "../../controllers/users.js";
+} from "../../controllers/users/users.js";
 
 const router = Router();
-router.post("/", createUserHandler);
+router.post("/", postUserHandler);
 router.get("/", getUsersHandler);
 router.get("/:id", getUserHandler);
-router.put("/:id", updateUserHandler);
+router.put("/:id", putUserHandler);
 router.patch("/:id", (req, res) => {});
 router.delete("/:id", deleteUserHandler);
 router.use("/:userId/addresses", addressesRouter);

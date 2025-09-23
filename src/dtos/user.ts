@@ -1,4 +1,4 @@
-export interface CreateUserDto {
+export interface PostUserDto {
   email: string;
   password: string;
   name: string;
@@ -10,7 +10,7 @@ export interface GetUserDto {
   name: string;
   is_email_verified: boolean;
 }
-export interface UpdateUserDto {
+export interface PutUserDto {
   email: string;
   password: string;
   name: string;

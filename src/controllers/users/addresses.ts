@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import type {
-  CreateUserAddressDto,
-  UpdateUserAddressDto,
+  PostUserAddressDto,
+  PutUserAddressDto,
 } from "../../dtos/address.js";
 import type { UserAddress } from "../../models/userAddress.js";
 import pool from "../../db.js";
@@ -12,7 +12,7 @@ export async function postUserAddressHandler(req: Request, res: Response) {
     return res.status(400).send();
   }
 
-  const address: CreateUserAddressDto = req.body;
+  const address: PostUserAddressDto = req.body;
 
   if (!address || !address.address_line_1 || !address.postcode) {
     return res.status(400).send();
@@ -89,7 +89,7 @@ export async function putUserAddressHandler(req: Request, res: Response) {
     return res.status(400).send();
   }
 
-  const userAddress: UpdateUserAddressDto = req.body;
+  const userAddress: PutUserAddressDto = req.body;
 
   if (!userAddress || !userAddress.address_line_1 || !userAddress.postcode) {
     return res.status(400).send();
