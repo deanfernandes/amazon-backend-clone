@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import type {
   PostUserAddressDto,
   PutUserAddressDto,
-} from "../../dtos/address.js";
+} from "../../dtos/userAddress.js";
 import type { UserAddress } from "../../models/userAddress.js";
 import pool from "../../db.js";
 

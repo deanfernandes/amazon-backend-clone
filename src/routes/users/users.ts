@@ -1,6 +1,6 @@
 import { Router } from "express";
 import addressesRouter from "./addresses.js";
-import paymentMethodsRouter from "./payment-methods.js";
+import paymentMethodsRouter from "./paymentMethods.js";
 import wishlistRouter from "./wishlist.js";
 import {
   postUserHandler,

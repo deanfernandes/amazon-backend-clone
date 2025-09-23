@@ -10,6 +10,7 @@ export interface GetUserDto {
   name: string;
   is_email_verified: boolean;
 }
+
 export interface PutUserDto {
   email: string;
   password: string;
