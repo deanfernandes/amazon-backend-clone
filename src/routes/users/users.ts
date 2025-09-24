@@ -1,17 +1,26 @@
 import { Router } from "express";
 import addressesRouter from "./addresses.js";
-import paymentMethodsRouter from "./payment-methods.js";
-import wishlistRouter from "./wishlist.js";
+import paymentMethodsRouter from "./paymentMethods.js";
+import subscriptionsRouter from "./subscriptions.js";
+import subscriptionPlansRouter from "./subscriptionsPlans.js";
+import {
+  postUserHandler,
+  getUsersHandler,
+  getUserHandler,
+  putUserHandler,
+  deleteUserHandler,
+} from "../../controllers/users/users.js";
 
 const router = Router();
-router.post("/", (req, res) => {});
-router.get("/", (req, res) => {});
-router.get("/:id", (req, res) => {});
-router.put("/:id", (req, res) => {});
+router.post("/", postUserHandler);
+router.get("/", getUsersHandler);
+router.get("/:id", getUserHandler);
+router.put("/:id", putUserHandler);
 router.patch("/:id", (req, res) => {});
-router.delete("/:id", (req, res) => {});
+router.delete("/:id", deleteUserHandler);
 router.use("/:userId/addresses", addressesRouter);
 router.use("/:userId/payment-methods", paymentMethodsRouter);
-router.use("/:userId/wishlist", wishlistRouter);
+router.use("/:userId/subscriptions", subscriptionsRouter);
+router.use("/:userId/subscription-plans", subscriptionPlansRouter);
 
 export default router;
