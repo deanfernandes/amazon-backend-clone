@@ -20,3 +20,13 @@ export interface GetUserPaymentMethodDto {
   paypal_email?: string;
   user_id: number;
 }
+
+export interface PutUserPaymentMethodDto {
+  type: UserPaymentMethodType;
+  card_number?: string;
+  cardholder_name?: string;
+  security_code?: string;
+  expiry_month?: string;
+  expiry_year?: string;
+  paypal_email?: string;
+}

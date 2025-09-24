@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 import pool from "../../db.js";
-import type { PostUserDto, GetUserDto, PutUserDto } from "../../dtos/user.js";
+import type { PostUserDto, GetUserDto, PutUserDto } from "../../dtos/users.js";
 import bcrypt from "bcrypt";
 
 export async function postUserHandler(req: Request, res: Response) {

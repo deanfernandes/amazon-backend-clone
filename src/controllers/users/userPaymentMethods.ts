@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import {
   PostUserPaymentMethodDto,
   GetUserPaymentMethodDto,
+  PutUserPaymentMethodDto,
 } from "../../dtos/userPaymentMethods.js";
 import {
   UserPaymentMethodType,
@@ -135,6 +136,84 @@ export async function getUserPaymentMethodHandler(req: Request, res: Response) {
     };
 
     return res.status(200).json(paymentMethod);
+  } catch (err) {
+    console.error(err);
+
+    return res.status(500).send();
+  }
+}
+
+export async function putUserPaymentMethodHandler(req: Request, res: Response) {
+  const userId = req.params.userId;
+  if (!userId) {
+    return res.status(400).send();
+  }
+
+  const id = req.params.id;
+  if (!id) {
+    return res.status(400).send();
+  }
+
+  const userPaymentMethod: PutUserPaymentMethodDto = req.body;
+
+  if (!userPaymentMethod || !userPaymentMethod.type) {
+    return res.status(400).send();
+  }
+
+  try {
+    const result = await pool.query<UserPaymentMethod>(
+      "SELECT * FROM user_payment_methods WHERE id = $1 AND user_id = $2",
+      [id, userId]
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(404).send();
+    }
+
+    await pool.query(
+      "UPDATE user_payment_methods SET type=$1, card_number=$2, cardholder_name=$3, security_code=$4, expiry_month=$5, expiry_year=$6, paypal_email=$7 WHERE id=$8 AND user_id=$9",
+      [
+        userPaymentMethod.type,
+        userPaymentMethod.card_number || null,
+        userPaymentMethod.cardholder_name || null,
+        userPaymentMethod.security_code || null,
+        userPaymentMethod.expiry_month || null,
+        userPaymentMethod.expiry_year || null,
+        userPaymentMethod.paypal_email || null,
+        id,
+        userId,
+      ]
+    );
+
+    return res.status(204).send();
+  } catch (err) {
+    console.error(err);
+
+    return res.status(500).send();
+  }
+}
+
+export async function deleteUserPaymentMethodHandler(
+  req: Request,
+  res: Response
+) {
+  const userId = req.params.userId;
+  if (!userId) {
+    return res.status(400).send();
+  }
+
+  const id = req.params.id;
+  if (!id) {
+    return res.status(400).send();
+  }
+
+  try {
+    await pool.query(
+      "DELETE FROM user_payment_methods WHERE id = $1 AND user_id = $2",
+      [id, userId]
+    );
+
+    return res.status(204).send();
   } catch (err) {
     console.error(err);
 

@@ -5,7 +5,7 @@ import {
   getUserAddressHandler,
   putUserAddressHandler,
   deleteUserAddressHandler,
-} from "../../controllers/users/addresses.js";
+} from "../../controllers/users/userAddresses.js";
 
 const router = Router({ mergeParams: true });
 router.post("/", postUserAddressHandler);

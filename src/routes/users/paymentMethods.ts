@@ -3,14 +3,16 @@ import {
   postUserPaymentMethodHandler,
   getUserPaymentMethodsHandler,
   getUserPaymentMethodHandler,
-} from "../../controllers/users/paymentMethods.js";
+  putUserPaymentMethodHandler,
+  deleteUserPaymentMethodHandler,
+} from "../../controllers/users/userPaymentMethods.js";
 
 const router = Router({ mergeParams: true });
 router.post("/", postUserPaymentMethodHandler);
 router.get("/", getUserPaymentMethodsHandler);
 router.get("/:id", getUserPaymentMethodHandler);
-router.put("/:id", (req, res) => {});
+router.put("/:id", putUserPaymentMethodHandler);
 router.patch("/:id", (req, res) => {});
-router.delete("/:id", (req, res) => {});
+router.delete("/:id", deleteUserPaymentMethodHandler);
 
 export default router;
