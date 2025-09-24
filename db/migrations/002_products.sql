@@ -12,6 +12,7 @@ CREATE TABLE product_options (
     id BIGSERIAL PRIMARY KEY,
     name TEXT NOT NULL
 );
+INSERT INTO product_options (name) VALUES ('Size'), ('Color'), ('Material'), ('Gender');
 
 CREATE TABLE product_product_options (
     product_id BIGINT NOT NULL REFERENCES products(id) ON DELETE CASCADE,
@@ -26,6 +27,20 @@ CREATE TABLE product_option_values (
     product_option_id BIGINT NOT NULL REFERENCES product_options(id) ON DELETE CASCADE,
     UNIQUE(value, product_option_id)
 );
+INSERT INTO product_option_values (value, product_option_id) VALUES
+  ('Small', 1),
+  ('Medium', 1),
+  ('Large', 1),
+  ('XL', 1),
+  ('Red', 2),
+  ('Blue', 2),
+  ('Green', 2),
+  ('Cotton', 3),
+  ('Wool', 3),
+  ('Leather', 3),
+  ('Unisex', 4),
+  ('Male', 4),
+  ('Female', 4);
 
 CREATE TABLE product_categories (
     id BIGSERIAL PRIMARY KEY,
@@ -38,3 +53,14 @@ CREATE TABLE product_product_categories (
 
     PRIMARY KEY (product_id, product_category_id)
 );
+INSERT INTO product_categories (name) VALUES
+  ('Electronics'),
+  ('Clothing'),
+  ('Home & Kitchen'),
+  ('Books'),
+  ('Sports & Outdoors'),
+  ('Beauty & Personal Care'),
+  ('Toys & Games'),
+  ('Automotive'),
+  ('Health'),
+  ('Garden');

@@ -59,10 +59,14 @@ CREATE TABLE user_subscription_plans (
     price NUMERIC(10, 2) NOT NULL CHECK (price > 0),
     duration_days SMALLINT NOT NULL CHECK (duration_days > 0)
 );
+INSERT INTO user_subscription_plans (name, price, duration_days) VALUES ('Monthly', 9.99, 30), ('Annual', 99.99, 365);
+
 CREATE TABLE user_subscription_statuses (
     id BIGSERIAL PRIMARY KEY,
     name TEXT NOT NULL UNIQUE
 );
+INSERT INTO user_subscription_statuses (name) VALUES ('active'), ('expired'), ('cancelled');
+
 CREATE TABLE user_subscriptions (
     id BIGSERIAL PRIMARY KEY,
     start_date TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -72,6 +76,4 @@ CREATE TABLE user_subscriptions (
     user_subscription_plan_id BIGINT NOT NULL REFERENCES user_subscription_plans(id) ON DELETE CASCADE
 );
 CREATE INDEX idx_user_subscriptions_user_id ON user_subscriptions (user_id);
-CREATE UNIQUE INDEX one_active_subscription_per_user ON user_subscriptions(user_id) WHERE user_subscription_status_id = 1;
-
-
+CREATE UNIQUE INDEX one_active_subscription_per_user ON user_subscriptions(user_id) WHERE user_subscription_status_id = 1; -- 1 = active
