@@ -3,6 +3,7 @@ import addressesRouter from "./addresses.js";
 import paymentMethodsRouter from "./paymentMethods.js";
 import subscriptionsRouter from "./subscriptions.js";
 import subscriptionPlansRouter from "./subscriptionsPlans.js";
+import wishlistProductsRouter from "./userWishlistProducts.js";
 import {
   postUserHandler,
   getUsersHandler,
@@ -22,5 +23,6 @@ router.use("/:userId/addresses", addressesRouter);
 router.use("/:userId/payment-methods", paymentMethodsRouter);
 router.use("/:userId/subscriptions", subscriptionsRouter);
 router.use("/:userId/subscription-plans", subscriptionPlansRouter);
+router.use("/:userId/wishlist/products", wishlistProductsRouter);
 
 export default router;
