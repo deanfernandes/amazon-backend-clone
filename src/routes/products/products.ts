@@ -1,9 +1,12 @@
 import { Router } from "express";
-import { postProductHandler } from "../../controllers/products/products.js";
+import {
+  postProductHandler,
+  getProductsHandler,
+} from "../../controllers/products/products.js";
 
 const router = Router();
 router.post("/", postProductHandler);
-router.get("/", (req, res) => {});
+router.get("/", getProductsHandler);
 router.get("/:id", (req, res) => {});
 router.put("/:id", (req, res) => {});
 router.patch("/:id", (req, res) => {});

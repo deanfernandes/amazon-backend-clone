@@ -52,9 +52,8 @@ export async function postProductHandler(req: Request, res: Response) {
   }
 }
 
-//TODO: sorting, pagination (offset)
 export async function getProductsHandler(req: Request, res: Response) {
-  const { name, minPrice, maxPrice, category } = req.query;
+  const { name, minPrice, maxPrice, category, sort } = req.query;
 
   let query = `
     SELECT DISTINCT products.*
@@ -98,6 +97,32 @@ export async function getProductsHandler(req: Request, res: Response) {
   if (filters.length > 0) {
     query += " WHERE " + filters.join(" AND ");
   }
+
+  switch (sort) {
+    case "price_asc":
+      query += " ORDER BY products.price";
+      break;
+    case "price_desc":
+      query += " ORDER BY products.price DESC";
+      break;
+    case "date_asc":
+      query += " ORDER BY products.created_at";
+      break;
+    case "date_desc":
+      query += " ORDER BY products.created_at DESC";
+      break;
+    case "name_asc":
+      query += " ORDER BY products.name";
+      break;
+    case "name_desc":
+      query += " ORDER BY products.name DESC";
+      break;
+  }
+
+  const page = Number(req.query.page) || 1;
+  const limit = Number(req.query.limit) || 10;
+  query += ` LIMIT $${values.length + 1} OFFSET $${values.length + 2}`;
+  values.push(limit, (page - 1) * limit);
 
   try {
     const result = await pool.query<Product>(query, values);
