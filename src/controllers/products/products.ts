@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 import pool from "../../db.js";
-import type { PostProductDto } from "../../dtos/products.js";
+import type { PostProductDto, PutProductDto } from "../../dtos/products.js";
 import type { Product } from "../../models/product.js";
 
 export async function postProductHandler(req: Request, res: Response) {
@@ -14,7 +14,8 @@ export async function postProductHandler(req: Request, res: Response) {
     typeof product.price !== "number" ||
     typeof product.stock !== "number" ||
     product.stock < 0 ||
-    !product.product_category_ids
+    !product.product_category_ids ||
+    !product.product_option_ids
   ) {
     return res.status(400).send();
   }
@@ -38,6 +39,14 @@ export async function postProductHandler(req: Request, res: Response) {
         [result.rows[0].id, product.product_category_ids[i]]
       );
     }
+
+    for (let i: number = 0; i < product.product_option_ids.length; i++) {
+      await client.query(
+        "INSERT INTO product_product_options (product_id, product_option_id) VALUES ($1, $2)",
+        [result.rows[0].id, product.product_option_ids[i]]
+      );
+    }
+
     await client.query("COMMIT");
 
     return res.status(204).send();
@@ -126,9 +135,125 @@ export async function getProductsHandler(req: Request, res: Response) {
 
   try {
     const result = await pool.query<Product>(query, values);
+
     return res.status(200).json(result.rows);
   } catch (err) {
     console.error(err);
     return res.status(500).send();
+  }
+}
+
+export async function getProductHandler(req: Request, res: Response) {
+  const id = req.params.id;
+
+  try {
+    const result = await pool.query<Product>(
+      "SELECT * FROM products WHERE id = $1",
+      [id]
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(404).send();
+    }
+
+    return res.status(200).json(result.rows[0]);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).send();
+  }
+}
+
+export async function putProductHandler(req: Request, res: Response) {
+  const id = req.params.id;
+
+  const product: PutProductDto = req.body;
+  if (
+    !product ||
+    typeof product.name !== "string" ||
+    typeof product.description !== "string" ||
+    typeof product.image_url !== "string" ||
+    typeof product.price !== "number" ||
+    typeof product.stock !== "number" ||
+    !Array.isArray(product.product_category_ids)
+  ) {
+    return res.status(400).send();
+  }
+
+  const client = await pool.connect();
+  try {
+    const result = await client.query("SELECT * FROM products WHERE id = $1", [
+      id,
+    ]);
+
+    if (result.rowCount === 0) {
+      return res.status(404).send();
+    }
+
+    await client.query("BEGIN");
+
+    await client.query(
+      "DELETE FROM product_product_categories WHERE product_id = $1",
+      [id]
+    );
+
+    await client.query(
+      "UPDATE products SET name=$1, description=$2, price=$3, stock=$4, image_url=$5 WHERE id=$6",
+      [
+        product.name,
+        product.description,
+        product.price,
+        product.stock,
+        product.image_url,
+        id,
+      ]
+    );
+
+    for (let i: number = 0; i < product.product_category_ids.length; i++) {
+      await client.query(
+        "INSERT INTO product_product_categories (product_id, product_category_id) VALUES ($1, $2)",
+        [id, product.product_category_ids[i]]
+      );
+    }
+
+    await client.query("COMMIT");
+
+    return res.status(204).send();
+  } catch (err) {
+    await client.query("ROLLBACK");
+
+    console.error(err);
+    return res.status(500).send();
+  } finally {
+    client.release();
+  }
+}
+
+export async function deleteProductHandler(req: Request, res: Response) {
+  const id = req.params.id;
+
+  const client = await pool.connect();
+  try {
+    const result = await client.query("SELECT * FROM products WHERE id = $1", [
+      id,
+    ]);
+
+    if (result.rowCount === 0) {
+      return res.status(404).send();
+    }
+
+    await client.query("BEGIN");
+
+    await client.query("DELETE FROM products WHERE id = $1", [id]);
+
+    await client.query("COMMIT");
+
+    return res.status(204).send();
+  } catch (err) {
+    await client.query("ROLLBACK");
+
+    console.error(err);
+    return res.status(500).send();
+  } finally {
+    client.release();
   }
 }
