@@ -52,15 +52,58 @@ export async function postProductHandler(req: Request, res: Response) {
   }
 }
 
-//TODO: filters (query, name/min price/max price/categories/not out of stock), sorting, pagination (offset)
+//TODO: sorting, pagination (offset)
 export async function getProductsHandler(req: Request, res: Response) {
-  try {
-    const result = await pool.query<Product>("SELECT * FROM products");
+  const { name, minPrice, maxPrice, category } = req.query;
 
+  let query = `
+    SELECT DISTINCT products.*
+    FROM products
+  `;
+
+  const filters: string[] = [];
+  const values: any[] = [];
+
+  if (category) {
+    query += `
+      INNER JOIN product_product_categories ppc ON products.id = ppc.product_id
+      INNER JOIN product_categories pc ON pc.id = ppc.product_category_id
+    `;
+
+    const categories = Array.isArray(category) ? category : [category];
+    const placeholders = categories.map((_, i) => `$${values.length + i + 1}`);
+    filters.push(`pc.name IN (${placeholders.join(", ")})`);
+    values.push(...categories);
+  }
+
+  if (name) {
+    filters.push(`products.name ILIKE $${values.length + 1}`);
+    values.push(`%${name}%`);
+  }
+
+  if (minPrice) {
+    filters.push(`products.price >= $${values.length + 1}`);
+    values.push(Number(minPrice));
+  }
+
+  if (maxPrice) {
+    filters.push(`products.price <= $${values.length + 1}`);
+    values.push(Number(maxPrice));
+  }
+
+  if ("inStock" in req.query) {
+    filters.push(`products.stock > 0`);
+  }
+
+  if (filters.length > 0) {
+    query += " WHERE " + filters.join(" AND ");
+  }
+
+  try {
+    const result = await pool.query<Product>(query, values);
     return res.status(200).json(result.rows);
   } catch (err) {
     console.error(err);
-
     return res.status(500).send();
   }
 }
