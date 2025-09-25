@@ -10,19 +10,32 @@ export async function postUserHandler(req: Request, res: Response) {
     return res.status(400).send();
   }
 
+  const client = await pool.connect();
   try {
     const password_hash = await bcrypt.hash(user.password, 10);
 
-    await pool.query(
-      "INSERT INTO users (email, password_hash, name) VALUES ($1, $2, $3)",
+    await client.query("BEGIN");
+
+    const result = await client.query(
+      "INSERT INTO users (email, password_hash, name) VALUES ($1, $2, $3) RETURNING id",
       [user.email, password_hash, user.name]
     );
 
+    await client.query("INSERT INTO user_wishlist (user_id) VALUES ($1)", [
+      result.rows[0].id,
+    ]);
+
+    await client.query("COMMIT");
+
     return res.status(204).send();
   } catch (err) {
+    await client.query("ROLLBACK");
+
     console.error(err);
 
     return res.status(500).send();
+  } finally {
+    client.release();
   }
 }
 
