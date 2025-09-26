@@ -18,6 +18,8 @@
     "build": "tsc",
     "start": "node --env-file=.env dist/index.js",
     "dev": "node --env-file=.env --watch dist/index.js",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "migrate": "node --env-file=.env db/runMigrations.js",
+    "seed": "node --env-file=.env db/runSeeds.js"
   }
 }

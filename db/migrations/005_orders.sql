@@ -1,7 +1,7 @@
 CREATE TABLE user_order_delivery_options (
     id BIGSERIAL PRIMARY KEY,
     name TEXT NOT NULL UNIQUE,
-    price NUMERIC(10,2) NOT NULL CHECK(price > 0)
+    price NUMERIC(10,2) NOT NULL
 );
 INSERT INTO user_order_delivery_options (name, price) VALUES
   ('Standard Shipping', 5.00),

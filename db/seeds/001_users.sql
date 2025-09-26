@@ -25,13 +25,37 @@ INSERT INTO user_payment_methods (
     expiry_month, expiry_year, paypal_email, user_id
 )
 SELECT
-  type,
-  CASE WHEN type = 'credit_card' THEN '411111111111' || LPAD((id % 10000)::text, 4, '0') ELSE NULL END,
-  CASE WHEN type = 'credit_card' THEN 'Cardholder ' || id ELSE NULL END,
-  CASE WHEN type = 'credit_card' THEN LPAD((floor(random()*900)+100)::text, 3, '0') ELSE NULL END,
-  CASE WHEN type = 'credit_card' THEN (1 + floor(random()*12))::int ELSE NULL END,
-  CASE WHEN type = 'credit_card' THEN (2025 + floor(random()*5))::int ELSE NULL END,
-  CASE WHEN type = 'paypal' THEN 'paypal' || id || '@example.com' ELSE NULL END,
+  type::user_payment_method_type,
+  CASE
+    WHEN type = 'credit_card'
+    THEN '411111111111' || LPAD(id::text, 7, '0')
+    ELSE NULL
+  END,
+  CASE
+    WHEN type = 'credit_card'
+    THEN 'Cardholder ' || id
+    ELSE NULL
+  END,
+  CASE
+    WHEN type = 'credit_card'
+    THEN LPAD((floor(random()*900)+100)::text, 3, '0')
+    ELSE NULL
+  END,
+  CASE
+    WHEN type = 'credit_card'
+    THEN (1 + floor(random()*12))::int
+    ELSE NULL
+  END,
+  CASE
+    WHEN type = 'credit_card'
+    THEN (2025 + floor(random()*5))::int
+    ELSE NULL
+  END,
+  CASE
+    WHEN type = 'paypal'
+    THEN 'paypal' || id || '@example.com'
+    ELSE NULL
+  END,
   id
 FROM (
   SELECT

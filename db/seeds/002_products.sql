@@ -26,17 +26,19 @@ SELECT
 FROM products p
 CROSS JOIN product_options o;
 
--- product product categories (random 1-3 categories)
--- For simplicity: 2 random categories per product
+-- product product categories (random 1-3 categories per product, ensuring no duplicates)
 INSERT INTO product_product_categories (product_id, product_category_id)
-SELECT
+SELECT DISTINCT
   p.id,
-  (1 + floor(random() * 10))::int  -- 10 categories (IDs 1–10)
+  cat_id
 FROM products p
-UNION ALL
-SELECT
-  p.id,
-  (1 + floor(random() * 10))::int
-FROM products p;
+CROSS JOIN LATERAL (
+  SELECT (1 + floor(random() * 10))::int AS cat_id
+  UNION ALL
+  SELECT (1 + floor(random() * 10))::int AS cat_id
+  UNION ALL
+  SELECT (1 + floor(random() * 10))::int AS cat_id
+) AS categories
+WHERE random() < 0.8;  -- roughly 2-3 categories per product on average
 
 COMMIT;
