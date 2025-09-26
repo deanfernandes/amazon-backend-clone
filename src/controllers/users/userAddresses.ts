@@ -25,7 +25,7 @@ export async function postUserAddressHandler(req: Request, res: Response) {
       [address.address_line_1, address_line_2, address.postcode, userId]
     );
 
-    return res.status(204).send();
+    return res.status(201).send();
   } catch (err) {
     console.error(err);
 

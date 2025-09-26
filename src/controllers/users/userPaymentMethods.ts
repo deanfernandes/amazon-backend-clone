@@ -61,7 +61,7 @@ export async function postUserPaymentMethodHandler(
       return res.status(400).send();
     }
 
-    return res.status(204).send();
+    return res.status(201).send();
   } catch (err) {
     console.error(err);
 

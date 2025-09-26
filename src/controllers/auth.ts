@@ -15,8 +15,9 @@ export async function registerHandler(req: Request, res: Response) {
     return res.status(400).send();
   }
 
+  const client = await pool.connect();
   try {
-    const result = await pool.query("SELECT * FROM users WHERE email=$1", [
+    const result = await client.query("SELECT * FROM users WHERE email=$1", [
       email,
     ]);
     if (result.rowCount > 0) {
@@ -25,10 +26,18 @@ export async function registerHandler(req: Request, res: Response) {
 
     const password_hash = await bcrypt.hash(password, 10);
 
-    await pool.query(
-      "INSERT INTO users (email, password_hash, name) VALUES ($1, $2, $3)",
+    await client.query("BEGIN");
+
+    const resultUserId = await client.query(
+      "INSERT INTO users (email, password_hash, name) VALUES ($1, $2, $3) RETURNING id",
       [email, password_hash, name]
     );
+
+    await client.query("INSERT INTO user_wishlist (user_id) VALUES ($1)", [
+      resultUserId.rows[0].id,
+    ]);
+
+    await client.query("COMMIT");
 
     const payload: EmailVerificationPayload = { email };
     const token = jwt.sign(
@@ -41,10 +50,15 @@ export async function registerHandler(req: Request, res: Response) {
 
     //TODO: send verification email and token
 
-    return res.status(204).send();
+    return res.status(201).send();
   } catch (err) {
+    await client.query("ROLLBACK");
+
     console.error(err);
+
     return res.status(500).send();
+  } finally {
+    client.release();
   }
 }
 
