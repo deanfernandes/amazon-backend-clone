@@ -33,7 +33,7 @@ export async function postUserWishlistHandler(req: Request, res: Response) {
       [result.rows[0].id, userWishlist.product_id]
     );
 
-    return res.status(204).send();
+    return res.status(201).send();
   } catch (err) {
     console.error(err);
 

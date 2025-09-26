@@ -27,7 +27,7 @@ export async function postUserHandler(req: Request, res: Response) {
 
     await client.query("COMMIT");
 
-    return res.status(204).send();
+    return res.status(201).send();
   } catch (err) {
     await client.query("ROLLBACK");
 

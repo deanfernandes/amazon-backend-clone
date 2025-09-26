@@ -50,7 +50,7 @@ export async function registerHandler(req: Request, res: Response) {
 
     //TODO: send verification email and token
 
-    return res.status(204).send();
+    return res.status(201).send();
   } catch (err) {
     await client.query("ROLLBACK");
 

@@ -32,7 +32,7 @@ export async function postUserSubscriptionHandler(req: Request, res: Response) {
       ]
     );
 
-    return res.status(204).send();
+    return res.status(201).send();
   } catch (err) {
     console.error(err);
 
