@@ -5,7 +5,7 @@ import {
   getUserOrderByIdHandler,
 } from "../../controllers/users/userOrders.js";
 
-const router = Router();
+const router = Router({ mergeParams: true });
 router.post("/", postUserOrderHandler);
 router.get("/", getUserOrdersHandler);
 router.get("/:id", getUserOrderByIdHandler);

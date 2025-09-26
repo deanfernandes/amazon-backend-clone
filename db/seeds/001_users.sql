@@ -77,4 +77,8 @@ id,
 (1 + floor(random() * 2))::int   -- 1 or 2: Monthly, Annual
 FROM users;
 
+-- user wishlists (one per user)
+INSERT INTO user_wishlists (user_id)
+SELECT id FROM users;
+
 COMMIT;

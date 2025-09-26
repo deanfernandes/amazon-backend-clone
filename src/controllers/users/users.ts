@@ -39,17 +39,44 @@ export async function postUserHandler(req: Request, res: Response) {
   }
 }
 
-//TODO: add filtering, sorting, pagination
+//TODO: add filtering, sorting
 export async function getUsersHandler(req: Request, res: Response) {
+  const page = Number(req.query.page) || 1;
+  const limit = Number(req.query.limit) || 20;
+
+  if (page < 1 || limit < 1) {
+    return res.status(400).send();
+  }
+
+  const offset = (page - 1) * limit;
+
   try {
     const result = await pool.query<GetUserDto>(
-      "SELECT id, email, name, is_email_verified FROM users",
-      []
+      `
+      SELECT id, email, name, is_email_verified
+      FROM users
+      ORDER BY id
+      LIMIT $1 OFFSET $2
+      `,
+      [limit, offset]
     );
-    return res.status(200).json(result.rows);
+
+    const resultCount = await pool.query<{ count: string }>(
+      "SELECT COUNT(*) FROM users"
+    );
+
+    const total = parseInt(resultCount.rows[0].count, 10);
+    const totalPages = Math.ceil(total / limit);
+
+    return res.status(200).json({
+      page,
+      limit,
+      total,
+      totalPages,
+      users: result.rows,
+    });
   } catch (err) {
     console.error(err);
-
     return res.status(500).send();
   }
 }

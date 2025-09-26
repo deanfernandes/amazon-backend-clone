@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import pool from "../../db.js";
-import type { UserSubscriptionPlan } from "../../models/userSubscriptionPlan.js";
+import pool from "../db.js";
+import type { UserSubscriptionPlan } from "../models/userSubscriptionPlan.js";
 
 export async function getUserSubscriptionPlansHandler(
   req: Request,

@@ -24,7 +24,7 @@ export async function postUserWishlistHandler(req: Request, res: Response) {
     }
 
     result = await pool.query(
-      "SELECT id FROM user_wishlist WHERE user_id = $1",
+      "SELECT id FROM user_wishlists WHERE user_id = $1",
       [userId]
     );
 
@@ -52,7 +52,7 @@ export async function getUserWishlistProductsHandler(
 
   try {
     const resultUserWishlistId = await pool.query<{ id: number }>(
-      "SELECT id FROM user_wishlist WHERE user_id = $1",
+      "SELECT id FROM user_wishlists WHERE user_id = $1",
       [userId]
     );
 
@@ -85,7 +85,7 @@ export async function deleteUserWishlistProductHandler(
 
   try {
     const resultUserWishlistId = await pool.query<{ id: number }>(
-      "SELECT id FROM user_wishlist WHERE user_id = $1",
+      "SELECT id FROM user_wishlists WHERE user_id = $1",
       [userId]
     );
 
