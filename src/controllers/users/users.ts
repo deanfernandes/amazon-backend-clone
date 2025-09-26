@@ -39,6 +39,7 @@ export async function postUserHandler(req: Request, res: Response) {
   }
 }
 
+//TODO: add filtering, sorting, pagination
 export async function getUsersHandler(req: Request, res: Response) {
   try {
     const result = await pool.query<GetUserDto>(
