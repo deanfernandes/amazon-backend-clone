@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 import pool from "../db.js";
 import type { UserSubscriptionPlan } from "../models/userSubscriptionPlan.js";
 

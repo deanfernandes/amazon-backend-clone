@@ -15,6 +15,6 @@ router.get("/:id", getProductHandler);
 router.put("/:id", putProductHandler);
 router.patch("/:id", (req, res) => {});
 router.delete("/:id", deleteProductHandler);
-router.use("/reviews", userReviewsRouter);
+router.use("/:productId/reviews", userReviewsRouter);
 
 export default router;

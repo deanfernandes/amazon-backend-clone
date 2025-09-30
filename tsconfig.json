@@ -3,7 +3,8 @@
     "outDir": "./dist",
     "module": "nodenext",
     "moduleResolution": "nodenext",
-    "lib": ["esnext"]
+    "lib": ["esnext"],
+    "isolatedModules": true
   },
   "include": ["src/**/*"]
 }

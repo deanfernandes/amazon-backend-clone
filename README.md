@@ -4,5 +4,5 @@
 
 - <s>db, sql, postgres, migrations, seed</s>
 - <s>api, rest</s>
-- testing, unit, integration, mocking, automated, jest, tdd
+- <s>testing, unit, integration, mocking, jest</s>
 - docs, installation guide
