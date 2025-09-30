@@ -13,8 +13,7 @@ jest.unstable_mockModule("../../src/db.js", () => {
 });
 
 let server: Server;
-const PORT = 3001;
-const baseUrl = `http://localhost:${PORT}/api/v1/subscription-plans`;
+let baseUrl: string;
 
 let app: any;
 describe("user subscription plans", () => {
@@ -22,9 +21,10 @@ describe("user subscription plans", () => {
     const appModule = await import("../../src/app.js");
     app = appModule.default;
 
-    server = app.listen(PORT, () => {
-      console.log(`app listening http://localhost:${PORT}`);
-    });
+    server = app.listen(0);
+    baseUrl = `http://localhost:${
+      server.address().port
+    }/api/v1/subscription-plans`;
   });
 
   afterAll(() => {

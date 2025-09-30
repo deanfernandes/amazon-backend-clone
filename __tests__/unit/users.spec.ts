@@ -26,18 +26,16 @@ jest.unstable_mockModule("../../src/db.js", () => {
   };
 });
 
-const PORT = 3001;
-const baseUrl = `http://localhost:${PORT}/api/v1`;
 let server: Server;
+let baseUrl: string;
 let app: any;
 
 beforeAll(async () => {
   const appModule = await import("../../src/app.js");
   app = appModule.default;
 
-  server = app.listen(PORT, () => {
-    console.log(`app listening http://localhost:${PORT}`);
-  });
+  server = app.listen(0);
+  baseUrl = `http://localhost:${server.address().port}/api/v1/users`;
 });
 
 afterAll(() => {
@@ -58,7 +56,7 @@ describe("/api/v1/users", () => {
         name: "tester",
       };
 
-      const response = await fetch(`http://localhost:${PORT}/api/v1/users`, {
+      const response = await fetch(baseUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(mockUser),
@@ -74,7 +72,7 @@ describe("/api/v1/users", () => {
         .mockResolvedValueOnce({})
         .mockResolvedValueOnce({});
 
-      const response = await fetch(`http://localhost:${PORT}/api/v1/users`, {
+      const response = await fetch(baseUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
       });
@@ -94,7 +92,7 @@ describe("/api/v1/users", () => {
         .mockResolvedValueOnce({})
         .mockResolvedValueOnce({});
 
-      const response = await fetch(`http://localhost:${PORT}/api/v1/users`, {
+      const response = await fetch(baseUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(mockUser),
@@ -125,7 +123,7 @@ describe("/api/v1/users", () => {
       mockPoolQuery.mockResolvedValueOnce({ rows: mockUsers });
       mockPoolQuery.mockResolvedValueOnce({ rows: [{ count: 1000 }] });
 
-      const response = await fetch(`http://localhost:${PORT}/api/v1/users`, {
+      const response = await fetch(baseUrl, {
         method: "GET",
       });
 
@@ -135,34 +133,25 @@ describe("/api/v1/users", () => {
     });
 
     test("invalid page returns 400", async () => {
-      const response = await fetch(
-        `http://localhost:${PORT}/api/v1/users?page=-5`,
-        {
-          method: "GET",
-        }
-      );
+      const response = await fetch(baseUrl + "?page=-5", {
+        method: "GET",
+      });
 
       expect(response.status).toBe(400);
     });
 
     test("invalid limit returns 400", async () => {
-      const response = await fetch(
-        `http://localhost:${PORT}/api/v1/users?limit=-5`,
-        {
-          method: "GET",
-        }
-      );
+      const response = await fetch(baseUrl + "?limit=-5", {
+        method: "GET",
+      });
 
       expect(response.status).toBe(400);
     });
 
     test("invalid page and limit returns 400", async () => {
-      const response = await fetch(
-        `http://localhost:${PORT}/api/v1/users?page=-5&limit=-5`,
-        {
-          method: "GET",
-        }
-      );
+      const response = await fetch(baseUrl + "?page=-5&limit=-5", {
+        method: "GET",
+      });
 
       expect(response.status).toBe(400);
     });
@@ -177,7 +166,7 @@ describe("/api/v1/users", () => {
       };
       mockPoolQuery.mockResolvedValueOnce({ rowCount: 1 });
 
-      const response = await fetch(baseUrl + "/users/1", {
+      const response = await fetch(baseUrl + "/1", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(mockUser),
@@ -194,7 +183,7 @@ describe("/api/v1/users", () => {
       };
       mockPoolQuery.mockResolvedValueOnce({ rowCount: 0 });
 
-      const response = await fetch(baseUrl + "/users/1", {
+      const response = await fetch(baseUrl + "/1", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(mockUser),
@@ -204,7 +193,7 @@ describe("/api/v1/users", () => {
     });
 
     test("send request without user returns 400", async () => {
-      const response = await fetch(baseUrl + "/users/1", {
+      const response = await fetch(baseUrl + "/1", {
         method: "PUT",
       });
 
@@ -216,7 +205,7 @@ describe("/api/v1/users", () => {
     test("delete existing user returns 204", async () => {
       mockPoolQuery.mockResolvedValueOnce({ rowCount: 1 });
 
-      const response = await fetch(baseUrl + "/users/1", {
+      const response = await fetch(baseUrl + "/1", {
         method: "DELETE",
       });
 
@@ -226,7 +215,7 @@ describe("/api/v1/users", () => {
     test("delete a user that doesn't exist returns 404", async () => {
       mockPoolQuery.mockResolvedValueOnce({ rowCount: 0 });
 
-      const response = await fetch(baseUrl + "/users/9999", {
+      const response = await fetch(baseUrl + "/9999", {
         method: "DELETE",
       });
 
