@@ -1,7 +1,7 @@
 import type { Server } from "node:http";
 import app from "../../src/app";
 import type { AddressInfo } from "node:net";
-import { PostUserDto } from "../../src/dtos/users";
+import { PostUserDto, PutUserDto } from "../../src/dtos/users";
 import dotenv from "dotenv";
 import pool from "../../src/db";
 
@@ -201,6 +201,70 @@ describe("users", () => {
       });
 
       expect(response.status).toBe(400);
+    });
+  });
+
+  describe("putUserHandler", () => {
+    test("update user password returns 204", async () => {
+      const insertResult = await pool.query(
+        `INSERT INTO users (email, password_hash, name) VALUES ($1, $2, $3) RETURNING id`,
+        ["test@example.com", "oldHash", "tester"]
+      );
+      const userId = insertResult.rows[0].id;
+
+      const mockUser: PutUserDto = {
+        email: "test@example.com",
+        password: "newPassword",
+        name: "tester",
+      };
+
+      const response = await fetch(baseUrl + `/${userId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(mockUser),
+      });
+
+      expect(response.status).toBe(204);
+    });
+
+    test("update user doesn't exist returns 404", async () => {
+      const mockUser: PutUserDto = {
+        email: "test@example.com",
+        password: "newPassword",
+        name: "tester",
+      };
+
+      const response = await fetch(baseUrl + `/9999`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(mockUser),
+      });
+
+      expect(response.status).toBe(404);
+    });
+  });
+
+  describe("deleteUserHandler", () => {
+    test("delete exising user returns 204", async () => {
+      const insertResult = await pool.query(
+        `INSERT INTO users (email, password_hash, name) VALUES ($1, $2, $3) RETURNING id`,
+        ["test@example.com", "oldHash", "tester"]
+      );
+      const userId = insertResult.rows[0].id;
+
+      const response = await fetch(baseUrl + `/${userId}`, {
+        method: "DELETE",
+      });
+
+      expect(response.status).toBe(204);
+    });
+
+    test("delete user that doesn't exist returns 404", async () => {
+      const response = await fetch(baseUrl + `/999999`, {
+        method: "DELETE",
+      });
+
+      expect(response.status).toBe(404);
     });
   });
 });
