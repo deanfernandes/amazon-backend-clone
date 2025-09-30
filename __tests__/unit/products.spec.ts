@@ -34,8 +34,13 @@ describe("products", () => {
     }/api/v1/products`;
   });
 
-  afterAll(() => {
-    server.close();
+  afterAll(async () => {
+    await new Promise<void>((resolve, reject) => {
+      server.close((err) => {
+        if (err) reject(err);
+        else resolve();
+      });
+    });
   });
 
   describe("postProductHandler", () => {

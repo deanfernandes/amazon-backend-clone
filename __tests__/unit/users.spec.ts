@@ -41,8 +41,13 @@ beforeAll(async () => {
   }/api/v1/users`;
 });
 
-afterAll(() => {
-  server.close();
+afterAll(async () => {
+  await new Promise<void>((resolve, reject) => {
+    server.close((err) => {
+      if (err) reject(err);
+      else resolve();
+    });
+  });
 });
 
 describe("/api/v1/users", () => {

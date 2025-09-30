@@ -21,7 +21,7 @@ export async function postUserHandler(req: Request, res: Response) {
       [user.email, password_hash, user.name]
     );
 
-    await client.query("INSERT INTO user_wishlist (user_id) VALUES ($1)", [
+    await client.query("INSERT INTO user_wishlists (user_id) VALUES ($1)", [
       result.rows[0].id,
     ]);
 

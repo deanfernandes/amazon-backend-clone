@@ -28,8 +28,13 @@ describe("user subscription plans", () => {
     }/api/v1/subscription-plans`;
   });
 
-  afterAll(() => {
-    server.close();
+  afterAll(async () => {
+    await new Promise<void>((resolve, reject) => {
+      server.close((err) => {
+        if (err) reject(err);
+        else resolve();
+      });
+    });
   });
 
   test("getUserSubscriptionPlansHandler", async () => {
