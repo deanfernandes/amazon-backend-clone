@@ -1,0 +1,50 @@
+openapi: 3.0.0
+info:
+  title: amazon clone api
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000/api/v1
+paths:
+  /users:
+    summary: handle users
+    post:
+      tags:
+        - users
+      summary: create a new user
+      description: create a new user in the database
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+                name:
+                  type: string
+              required:
+                - email
+                - password
+                - name
+            example:
+              email: user@example.com
+              password: mysecurepassword
+              name: John Doe
+        required: true
+      responses:
+        "400":
+          description: user not added
+        "200":
+          description: user was added
+    get:
+      tags:
+        - users
+      summary: gets all users
+      description: gets all users from database
+      responses:
+        "400":
+          description: did not return users
+        "200":
+          description: returned all users
