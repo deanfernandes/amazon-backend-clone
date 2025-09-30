@@ -2,6 +2,7 @@ import type { Server } from "node:http";
 import { jest } from "@jest/globals";
 import type { UserSubscriptionPlan } from "../../src/models/userSubscriptionPlan";
 import pool from "../../src/db.js";
+import type { AddressInfo } from "node:net";
 
 const mockQuery = jest.fn();
 jest.unstable_mockModule("../../src/db.js", () => {
@@ -23,7 +24,7 @@ describe("user subscription plans", () => {
 
     server = app.listen(0);
     baseUrl = `http://localhost:${
-      server.address().port
+      (server.address() as AddressInfo).port
     }/api/v1/subscription-plans`;
   });
 

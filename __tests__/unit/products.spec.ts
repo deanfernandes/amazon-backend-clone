@@ -3,6 +3,7 @@ import { jest } from "@jest/globals";
 import pool from "../../src/db.js";
 import type { PostProductDto, PutProductDto } from "../../src/dtos/products.js";
 import type { Product } from "../../src/models/product.js";
+import type { AddressInfo } from "node:net";
 
 const mockQuery = jest.fn();
 const mockPoolQuery = jest.fn();
@@ -28,7 +29,9 @@ describe("products", () => {
     app = appModule.default;
 
     server = app.listen(0);
-    baseUrl = `http://localhost:${server.address().port}/api/v1/products`;
+    baseUrl = `http://localhost:${
+      (server.address() as AddressInfo).port
+    }/api/v1/products`;
   });
 
   afterAll(() => {

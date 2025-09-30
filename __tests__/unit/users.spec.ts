@@ -3,6 +3,7 @@ import type { Server } from "node:http";
 import { jest } from "@jest/globals";
 import bcrypt from "bcrypt";
 import pool from "../../src/db.js";
+import type { AddressInfo } from "node:net";
 
 jest.unstable_mockModule("bcrypt", () => {
   return {
@@ -35,7 +36,9 @@ beforeAll(async () => {
   app = appModule.default;
 
   server = app.listen(0);
-  baseUrl = `http://localhost:${server.address().port}/api/v1/users`;
+  baseUrl = `http://localhost:${
+    (server.address() as AddressInfo).port
+  }/api/v1/users`;
 });
 
 afterAll(() => {
