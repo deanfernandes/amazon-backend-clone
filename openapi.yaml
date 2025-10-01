@@ -531,6 +531,32 @@ paths:
           minimum: 1
           type: integer
         example: 1
+  /products/{productId}/reviews:
+    summary: handle one product
+    get:
+      tags:
+        - products
+      summary: get user reviews for a product by id
+      responses:
+        "400":
+          description: client error getting product user reviews
+        "500":
+          description: server error getting product user reviews
+        "200":
+          description: returns product reviews
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetProductReviewsResponseDto"
+    parameters:
+      - name: productId
+        in: path
+        description: the id of the product
+        required: true
+        schema:
+          minimum: 1
+          type: integer
+        example: 1
 components:
   schemas:
     PostUserDto:
@@ -858,3 +884,42 @@ components:
         - stock
         - image_url
         - product_category_ids
+    GetProductReviewsResponseDto:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: integer
+            example: 42
+          user_id:
+            type: integer
+            example: 5
+          product_id:
+            type: integer
+            example: 7
+          rating:
+            type: number
+            format: float
+            minimum: 0
+            maximum: 5
+            example: 4.5
+          comment:
+            type: string
+            nullable: true
+            example: "Really liked this product, would buy again."
+          created_at:
+            type: string
+            format: date-time
+            example: "2025-09-28T14:32:00Z"
+          name:
+            type: string
+            description: Name of the user who wrote the review
+            example: "Alice Johnson"
+        required:
+          - id
+          - user_id
+          - product_id
+          - rating
+          - created_at
+          - name
