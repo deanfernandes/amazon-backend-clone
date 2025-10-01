@@ -557,6 +557,21 @@ paths:
           minimum: 1
           type: integer
         example: 1
+  /product-categories:
+    summary: handle product categories
+    get:
+      tags:
+        - product categories
+      summary: get categories for products
+      responses:
+        "500":
+          description: server error getting product categories
+        "200":
+          description: returns product categories
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetProductCategoriesResponseDto"
 components:
   schemas:
     PostUserDto:
@@ -922,4 +937,18 @@ components:
           - product_id
           - rating
           - created_at
+          - name
+    GetProductCategoriesResponseDto:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: integer
+            example: 1
+          name:
+            type: string
+            example: "Electronics"
+        required:
+          - id
           - name
