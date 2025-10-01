@@ -16,22 +16,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                email:
-                  type: string
-                password:
-                  type: string
-                name:
-                  type: string
-              required:
-                - email
-                - password
-                - name
-            example:
-              email: user@example.com
-              password: mysecurepassword
-              name: John Doe
+              $ref: "#/components/schemas/PostUserDto"
         required: true
       responses:
         "400":
@@ -68,20 +53,8 @@ paths:
           description: returned all users
           content:
             application/json:
-              example:
-                page: 1
-                limit: 10
-                total: 1000000
-                totalPages: 100000
-                users:
-                  - id: 1
-                    email: bob@example.com
-                    name: bob
-                    is_email_verified: true
-                  - id: 2
-                    email: alice@example.com
-                    name: alice
-                    is_email_verified: false
+              schema:
+                $ref: "#/components/schemas/GetUsersResponseDto"
         "500":
           description: server error couldn't return user
   /users/{id}:
@@ -177,3 +150,433 @@ paths:
           minimum: 1
           type: integer
         example: 1
+  /users/{userId}/addresses:
+    summary: handle user addresses
+    post:
+      tags:
+        - users
+        - user addresses
+      summary: create a new user address
+      description: create a new user address in the database
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PostUserAddressDto"
+        required: true
+      responses:
+        "400":
+          description: client error user address not added
+        "201":
+          description: new user addresses created
+        "500":
+          description: server error user address not added
+    get:
+      tags:
+        - users
+        - user addresses
+      summary: get all addresses for user
+      description: get all addresses for user from database
+      responses:
+        "400":
+          description: client error user address not returned
+        "200":
+          description: user addresses returned
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetUserAddressesResponseDto"
+        "500":
+          description: server error user address not returned
+    parameters:
+      - name: userId
+        in: path
+        description: the id for the user
+        required: true
+        schema:
+          minimum: 1
+          type: integer
+        example: 1
+  /users/{userId}/addresses/{id}:
+    get:
+      tags:
+        - users
+        - user addresses
+      summary: get the address by id for the user
+      description: get the address by id for the user from database
+      responses:
+        "400":
+          description: client error user address not returned
+        "200":
+          description: user address returned
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetUserAddressResponseDto"
+        "500":
+          description: server error user address not returned
+    put:
+      tags:
+        - users
+        - user addresses
+      summary: update the user address by ids
+      description: update the user address by ids in the database
+      responses:
+        "400":
+          description: client error user address not updated
+        "204":
+          description: user address updated
+        "500":
+          description: server error user address not updated
+    delete:
+      tags:
+        - users
+        - user addresses
+      summary: delete the user address by ids
+      description: delete the user address by ids in the database
+      responses:
+        "400":
+          description: client error user address not deleted
+        "204":
+          description: user address deleted
+        "500":
+          description: server error user address not deleted
+    parameters:
+      - name: userId
+        in: path
+        description: the id for the user
+        required: true
+        schema:
+          minimum: 1
+          type: integer
+        example: 1
+      - name: id
+        in: path
+        description: the id for the user address
+        required: true
+        schema:
+          minimum: 1
+          type: integer
+        example: 1
+  /users/{userId}/payment-methods:
+    summary: handle user payment methods
+    post:
+      tags:
+        - users
+        - user payment methods
+      summary: add a new user payment method
+      description: add a new user payment method in the database
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PostUserPaymentMethodDto"
+        required: true
+      responses:
+        "400":
+          description: client error user payment method not added
+        "201":
+          description: new user payment method added
+        "500":
+          description: server error user payment method not added
+    get:
+      tags:
+        - users
+        - user payment methods
+      summary: gets all user paymenth methods
+      description: gets all user paymenth methods from the database
+      responses:
+        "400":
+          description: client error user payment methods not returned
+        "200":
+          description: returns all user payment methods
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetUserPaymentMethodsResponseDto"
+        "500":
+          description: server error user payment methods not returned
+    parameters:
+      - name: userId
+        in: path
+        description: the id for the user
+        required: true
+        schema:
+          minimum: 1
+          type: integer
+        example: 1
+  /users/{userId}/payment-methods/{id}:
+    summary: handle user payment methods for specfic user
+    get:
+      tags:
+        - users
+        - user payment methods
+      summary: gets user payment method
+      description: gets user payment method
+      responses:
+        "400":
+          description: client error couldn't get user payment method
+        "404":
+          description: user payment method not found
+        "200":
+          description: return user payment method
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetUserPaymentMethodResponseDto"
+        "500":
+          description: server error couldn't get user payment method
+    put:
+      tags:
+        - users
+        - user payment methods
+      summary: update user payment method
+      description: update user payment method
+      requestBody:
+        description: the user object to update
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PutUserPaymentMethodDto"
+        required: true
+      responses:
+        "400":
+          description: client error couldn't update user payment method
+        "404":
+          description: user payment method not found
+        "204":
+          description: updated user payment method
+        "500":
+          description: server error couldn't update user payment method
+    delete:
+      tags:
+        - users
+        - user payment methods
+      summary: delete user payment method
+      description: delete user payment method
+      responses:
+        "400":
+          description: client error couldn't delete user payment method
+        "204":
+          description: deleted user payment method
+        "500":
+          description: server error couldn't delete user payment method
+    parameters:
+      - name: userId
+        in: path
+        description: the id for the user
+        required: true
+        schema:
+          minimum: 1
+          type: integer
+        example: 1
+      - name: id
+        in: path
+        description: the id for the user payment method
+        required: true
+        schema:
+          minimum: 1
+          type: integer
+        example: 1
+components:
+  schemas:
+    PostUserDto:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+        name:
+          type: string
+      required:
+        - email
+        - password
+        - name
+      example:
+        email: user@example.com
+        password: mysecurepassword
+        name: John Doe
+    GetUsersResponseDto:
+      type: object
+      required:
+        - page
+        - limit
+        - total
+        - totalPages
+        - users
+      properties:
+        page:
+          type: integer
+          example: 1
+        limit:
+          type: integer
+          example: 20
+        total:
+          type: integer
+          example: 1000000
+        totalPages:
+          type: integer
+          example: 100000
+        users:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: 1
+              email:
+                type: string
+                example: bob@example.com
+              name:
+                type: string
+                example: bob
+              is_email_verified:
+                type: boolean
+                example: true
+    PostUserAddressDto:
+      required:
+        - address_line_1
+        - postcode
+      type: object
+      properties:
+        address_line_1:
+          type: string
+        address_line_2:
+          type: string
+        postcode:
+          type: string
+    GetUserAddressesResponseDto:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: integer
+            example: 1
+          address_line_1:
+            type: string
+            example: "123 Main St"
+          address_line_2:
+            type: string
+            example: "Apt 4B"
+          postcode:
+            type: string
+            example: "90210"
+    GetUserAddressResponseDto:
+      type: object
+      required:
+        - id
+        - address_line_1
+        - postcode
+      properties:
+        id:
+          type: integer
+          example: 1
+        address_line_1:
+          type: string
+          example: "123 Main St"
+        address_line_2:
+          type: string
+          example: "Apt 4B"
+        postcode:
+          type: string
+          example: "90210"
+    UserPaymentMethodType:
+      type: string
+      enum:
+        - CREDIT_CARD
+        - PAYPAL
+      example: CREDIT_CARD
+
+    PostUserPaymentMethodDto:
+      type: object
+      properties:
+        type:
+          $ref: "#/components/schemas/UserPaymentMethodType"
+        card_number:
+          type: string
+          example: "4111111111111111"
+        cardholder_name:
+          type: string
+          example: "John Doe"
+        security_code:
+          type: string
+          example: "123"
+        expiry_month:
+          type: integer
+          minimum: 1
+          maximum: 12
+          example: 12
+        expiry_year:
+          type: integer
+          example: 2025
+        paypal_email:
+          type: string
+          format: email
+          example: "user@paypal.com"
+      required:
+        - type
+
+    GetUserPaymentMethodResponseDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        type:
+          $ref: "#/components/schemas/UserPaymentMethodType"
+        card_number:
+          type: string
+          example: "4111111111111111"
+        cardholder_name:
+          type: string
+          example: "John Doe"
+        expiry_month:
+          type: string
+          example: "12"
+        expiry_year:
+          type: string
+          example: "2025"
+        paypal_email:
+          type: string
+          format: email
+          example: "user@paypal.com"
+        user_id:
+          type: integer
+          example: 123
+
+    GetUserPaymentMethodsResponseDto:
+      type: array
+      items:
+        $ref: "#/components/schemas/GetUserPaymentMethodResponseDto"
+
+    PutUserPaymentMethodDto:
+      type: object
+      properties:
+        type:
+          $ref: "#/components/schemas/UserPaymentMethodType"
+        card_number:
+          type: string
+          example: "4111111111111111"
+        cardholder_name:
+          type: string
+          example: "John Doe"
+        security_code:
+          type: string
+          example: "123"
+        expiry_month:
+          type: integer
+          minimum: 1
+          maximum: 12
+          example: 12
+        expiry_year:
+          type: integer
+          example: 2025
+        paypal_email:
+          type: string
+          format: email
+          example: "user@paypal.com"
+      required:
+        - type
