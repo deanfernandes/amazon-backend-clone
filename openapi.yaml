@@ -43,8 +43,137 @@ paths:
         - users
       summary: gets all users
       description: gets all users from database
+      parameters:
+        - name: page
+          in: query
+          description: the page number
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+          example: 1
+        - name: limit
+          in: query
+          description: how many users per page
+          schema:
+            type: integer
+            minimum: 1
+            default: 20
+          example: 20
+
       responses:
         "400":
           description: did not return users
         "200":
           description: returned all users
+          content:
+            application/json:
+              example:
+                page: 1
+                limit: 10
+                total: 1000000
+                totalPages: 100000
+                users:
+                  - id: 1
+                    email: bob@example.com
+                    name: bob
+                    is_email_verified: true
+                  - id: 2
+                    email: alice@example.com
+                    name: alice
+                    is_email_verified: false
+        "500":
+          description: server error couldn't return user
+  /users/{id}:
+    summary: one user
+    description: one user from database
+    get:
+      tags:
+        - users
+      summary: get one user by id
+      description: get one user by id from database
+      responses:
+        "400":
+          description: no user returned
+        "404":
+          description: user doesn't exist
+        "200":
+          description: user found and returned
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 1
+                  email:
+                    type: string
+                    example: bob@example.com
+                  name:
+                    type: string
+                    example: bob
+                  is_email_verified:
+                    type: boolean
+                    example: true
+              example:
+                id: 1
+                email: bob@example.com
+                name: bob
+                is_email_verified: true
+        "500":
+          description: server error couldn't return user
+    put:
+      tags:
+        - users
+      summary: update one user by id
+      description: update one user by id in the database
+      requestBody:
+        description: the properties to update
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: bob@example.com
+                password:
+                  type: string
+                  example: newPassword
+                name:
+                  type: string
+                  example: bobby
+        required: true
+      responses:
+        "400":
+          description: no user updated
+        "404":
+          description: user doesn't exist
+        "204":
+          description: user found and updated
+        "500":
+          description: server error couldn't return user
+    delete:
+      tags:
+        - users
+      summary: delete user by id
+      description: delete user by id from the database
+      responses:
+        "400":
+          description: client error no user deleted
+        "404":
+          description: user doesn't exist
+        "204":
+          description: user found and deleted
+        "500":
+          description: server error couldn't return user
+    parameters:
+      - name: id
+        in: path
+        description: the id of the user
+        required: true
+        schema:
+          minimum: 1
+          type: integer
+        example: 1
