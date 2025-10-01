@@ -378,6 +378,22 @@ paths:
           minimum: 1
           type: integer
         example: 1
+  /subscription-plans:
+    summary: handle subscription plans
+    get:
+      tags:
+        - subscription plans
+      summary: gets avaiable subscription plans
+      description: gets avaiable subscription plans
+      responses:
+        "200":
+          description: return all subscription plans
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetUserSubscriptionPlansDto"
+        "500":
+          description: server error couldn't get subscription plans
 components:
   schemas:
     PostUserDto:
@@ -580,3 +596,22 @@ components:
           example: "user@paypal.com"
       required:
         - type
+    GetUserSubscriptionPlanDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: Monthly
+        price:
+          type: string
+          example: "9.99"
+        duration_days:
+          type: integer
+          example: 30
+    GetUserSubscriptionPlansDto:
+      type: array
+      items:
+        $ref: "#/components/schemas/GetUserSubscriptionPlanDto"
