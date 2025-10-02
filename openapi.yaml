@@ -1,0 +1,954 @@
+openapi: 3.0.0
+info:
+  title: amazon clone api
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000/api/v1
+paths:
+  /users:
+    summary: handle users
+    post:
+      tags:
+        - users
+      summary: create a new user
+      description: create a new user in the database
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PostUserDto"
+        required: true
+      responses:
+        "400":
+          description: user not added
+        "200":
+          description: user was added
+    get:
+      tags:
+        - users
+      summary: gets all users
+      description: gets all users from database
+      parameters:
+        - name: page
+          in: query
+          description: the page number
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+          example: 1
+        - name: limit
+          in: query
+          description: how many users per page
+          schema:
+            type: integer
+            minimum: 1
+            default: 20
+          example: 20
+
+      responses:
+        "400":
+          description: did not return users
+        "200":
+          description: returned all users
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetUsersResponseDto"
+        "500":
+          description: server error couldn't return user
+  /users/{id}:
+    summary: one user
+    description: one user from database
+    get:
+      tags:
+        - users
+      summary: get one user by id
+      description: get one user by id from database
+      responses:
+        "400":
+          description: no user returned
+        "404":
+          description: user doesn't exist
+        "200":
+          description: user found and returned
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 1
+                  email:
+                    type: string
+                    example: bob@example.com
+                  name:
+                    type: string
+                    example: bob
+                  is_email_verified:
+                    type: boolean
+                    example: true
+              example:
+                id: 1
+                email: bob@example.com
+                name: bob
+                is_email_verified: true
+        "500":
+          description: server error couldn't return user
+    put:
+      tags:
+        - users
+      summary: update one user by id
+      description: update one user by id in the database
+      requestBody:
+        description: the properties to update
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: bob@example.com
+                password:
+                  type: string
+                  example: newPassword
+                name:
+                  type: string
+                  example: bobby
+        required: true
+      responses:
+        "400":
+          description: no user updated
+        "404":
+          description: user doesn't exist
+        "204":
+          description: user found and updated
+        "500":
+          description: server error couldn't return user
+    delete:
+      tags:
+        - users
+      summary: delete user by id
+      description: delete user by id from the database
+      responses:
+        "400":
+          description: client error no user deleted
+        "404":
+          description: user doesn't exist
+        "204":
+          description: user found and deleted
+        "500":
+          description: server error couldn't return user
+    parameters:
+      - name: id
+        in: path
+        description: the id of the user
+        required: true
+        schema:
+          minimum: 1
+          type: integer
+        example: 1
+  /users/{userId}/addresses:
+    summary: handle user addresses
+    post:
+      tags:
+        - users
+        - user addresses
+      summary: create a new user address
+      description: create a new user address in the database
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PostUserAddressDto"
+        required: true
+      responses:
+        "400":
+          description: client error user address not added
+        "201":
+          description: new user addresses created
+        "500":
+          description: server error user address not added
+    get:
+      tags:
+        - users
+        - user addresses
+      summary: get all addresses for user
+      description: get all addresses for user from database
+      responses:
+        "400":
+          description: client error user address not returned
+        "200":
+          description: user addresses returned
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetUserAddressesResponseDto"
+        "500":
+          description: server error user address not returned
+    parameters:
+      - name: userId
+        in: path
+        description: the id for the user
+        required: true
+        schema:
+          minimum: 1
+          type: integer
+        example: 1
+  /users/{userId}/addresses/{id}:
+    get:
+      tags:
+        - users
+        - user addresses
+      summary: get the address by id for the user
+      description: get the address by id for the user from database
+      responses:
+        "400":
+          description: client error user address not returned
+        "200":
+          description: user address returned
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetUserAddressResponseDto"
+        "500":
+          description: server error user address not returned
+    put:
+      tags:
+        - users
+        - user addresses
+      summary: update the user address by ids
+      description: update the user address by ids in the database
+      responses:
+        "400":
+          description: client error user address not updated
+        "204":
+          description: user address updated
+        "500":
+          description: server error user address not updated
+    delete:
+      tags:
+        - users
+        - user addresses
+      summary: delete the user address by ids
+      description: delete the user address by ids in the database
+      responses:
+        "400":
+          description: client error user address not deleted
+        "204":
+          description: user address deleted
+        "500":
+          description: server error user address not deleted
+    parameters:
+      - name: userId
+        in: path
+        description: the id for the user
+        required: true
+        schema:
+          minimum: 1
+          type: integer
+        example: 1
+      - name: id
+        in: path
+        description: the id for the user address
+        required: true
+        schema:
+          minimum: 1
+          type: integer
+        example: 1
+  /users/{userId}/payment-methods:
+    summary: handle user payment methods
+    post:
+      tags:
+        - users
+        - user payment methods
+      summary: add a new user payment method
+      description: add a new user payment method in the database
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PostUserPaymentMethodDto"
+        required: true
+      responses:
+        "400":
+          description: client error user payment method not added
+        "201":
+          description: new user payment method added
+        "500":
+          description: server error user payment method not added
+    get:
+      tags:
+        - users
+        - user payment methods
+      summary: gets all user paymenth methods
+      description: gets all user paymenth methods from the database
+      responses:
+        "400":
+          description: client error user payment methods not returned
+        "200":
+          description: returns all user payment methods
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetUserPaymentMethodsResponseDto"
+        "500":
+          description: server error user payment methods not returned
+    parameters:
+      - name: userId
+        in: path
+        description: the id for the user
+        required: true
+        schema:
+          minimum: 1
+          type: integer
+        example: 1
+  /users/{userId}/payment-methods/{id}:
+    summary: handle user payment methods for specfic user
+    get:
+      tags:
+        - users
+        - user payment methods
+      summary: gets user payment method
+      description: gets user payment method
+      responses:
+        "400":
+          description: client error couldn't get user payment method
+        "404":
+          description: user payment method not found
+        "200":
+          description: return user payment method
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetUserPaymentMethodResponseDto"
+        "500":
+          description: server error couldn't get user payment method
+    put:
+      tags:
+        - users
+        - user payment methods
+      summary: update user payment method
+      description: update user payment method
+      requestBody:
+        description: the user object to update
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PutUserPaymentMethodDto"
+        required: true
+      responses:
+        "400":
+          description: client error couldn't update user payment method
+        "404":
+          description: user payment method not found
+        "204":
+          description: updated user payment method
+        "500":
+          description: server error couldn't update user payment method
+    delete:
+      tags:
+        - users
+        - user payment methods
+      summary: delete user payment method
+      description: delete user payment method
+      responses:
+        "400":
+          description: client error couldn't delete user payment method
+        "204":
+          description: deleted user payment method
+        "500":
+          description: server error couldn't delete user payment method
+    parameters:
+      - name: userId
+        in: path
+        description: the id for the user
+        required: true
+        schema:
+          minimum: 1
+          type: integer
+        example: 1
+      - name: id
+        in: path
+        description: the id for the user payment method
+        required: true
+        schema:
+          minimum: 1
+          type: integer
+        example: 1
+  /subscription-plans:
+    summary: handle subscription plans
+    get:
+      tags:
+        - subscription plans
+      summary: gets avaiable subscription plans
+      description: gets avaiable subscription plans
+      responses:
+        "200":
+          description: return all subscription plans
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetUserSubscriptionPlansDto"
+        "500":
+          description: server error couldn't get subscription plans
+  /products:
+    summary: handle products
+    post:
+      tags:
+        - products
+      summary: create a new product
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PostProductDto"
+        required: true
+      responses:
+        "400":
+          description: client error adding new product
+        "500":
+          description: server error adding new product
+        "201":
+          description: product was added
+    get:
+      tags:
+        - products
+      summary: get all products
+      parameters:
+        - name: name
+          in: query
+          description: filter products by name pattern (case-insensitive)
+          schema:
+            type: string
+          example: swag
+
+        - name: minPrice
+          in: query
+          description: filter products with price greater than or equal to this value
+          schema:
+            type: number
+            minimum: 0
+          example: 9.99
+
+        - name: maxPrice
+          in: query
+          description: filter products with price less than or equal to this value
+          schema:
+            type: number
+            minimum: 0
+          example: 99.99
+
+        - name: category
+          in: query
+          description: filter products by category name (can be repeated for multiple categories)
+          schema:
+            type: array
+            items:
+              type: string
+          example: ["electronics", "clothing"]
+
+        - name: sort
+          in: query
+          description: sort the products by field and direction
+          schema:
+            type: string
+            enum:
+              - price_asc
+              - price_desc
+              - date_asc
+              - date_desc
+              - name_asc
+              - name_desc
+          example: price_asc
+
+      responses:
+        "400":
+          description: client error getting all products
+        "500":
+          description: server error getting all products
+        "200":
+          description: return all products
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetProductsResponseDto"
+  /products/{id}:
+    summary: handle one product
+    get:
+      tags:
+        - products
+      summary: get one product by id
+      responses:
+        "500":
+          description: server error getting product
+        "404":
+          description: product not found
+        "200":
+          description: returns product
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetProductResponseDto"
+    put:
+      tags:
+        - products
+      summary: update a product by id
+      requestBody:
+        description: the properties to update
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PutProductDto"
+      responses:
+        "400":
+          description: client error updating product
+        "500":
+          description: server error updating product
+        "404":
+          description: product not found
+        "204":
+          description: product updated successfully
+    delete:
+      tags:
+        - products
+      summary: delete a product by id
+      responses:
+        "500":
+          description: server error deleting product
+        "404":
+          description: product not found
+        "204":
+          description: product deleted successfully
+    parameters:
+      - name: id
+        in: path
+        description: the id of the product
+        required: true
+        schema:
+          minimum: 1
+          type: integer
+        example: 1
+  /products/{productId}/reviews:
+    summary: handle one product
+    get:
+      tags:
+        - products
+      summary: get user reviews for a product by id
+      responses:
+        "400":
+          description: client error getting product user reviews
+        "500":
+          description: server error getting product user reviews
+        "200":
+          description: returns product reviews
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetProductReviewsResponseDto"
+    parameters:
+      - name: productId
+        in: path
+        description: the id of the product
+        required: true
+        schema:
+          minimum: 1
+          type: integer
+        example: 1
+  /product-categories:
+    summary: handle product categories
+    get:
+      tags:
+        - product categories
+      summary: get categories for products
+      responses:
+        "500":
+          description: server error getting product categories
+        "200":
+          description: returns product categories
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetProductCategoriesResponseDto"
+components:
+  schemas:
+    PostUserDto:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+        name:
+          type: string
+      required:
+        - email
+        - password
+        - name
+      example:
+        email: user@example.com
+        password: mysecurepassword
+        name: John Doe
+    GetUsersResponseDto:
+      type: object
+      required:
+        - page
+        - limit
+        - total
+        - totalPages
+        - users
+      properties:
+        page:
+          type: integer
+          example: 1
+        limit:
+          type: integer
+          example: 20
+        total:
+          type: integer
+          example: 1000000
+        totalPages:
+          type: integer
+          example: 100000
+        users:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: 1
+              email:
+                type: string
+                example: bob@example.com
+              name:
+                type: string
+                example: bob
+              is_email_verified:
+                type: boolean
+                example: true
+    PostUserAddressDto:
+      required:
+        - address_line_1
+        - postcode
+      type: object
+      properties:
+        address_line_1:
+          type: string
+        address_line_2:
+          type: string
+        postcode:
+          type: string
+    GetUserAddressesResponseDto:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: integer
+            example: 1
+          address_line_1:
+            type: string
+            example: "123 Main St"
+          address_line_2:
+            type: string
+            example: "Apt 4B"
+          postcode:
+            type: string
+            example: "90210"
+    GetUserAddressResponseDto:
+      type: object
+      required:
+        - id
+        - address_line_1
+        - postcode
+      properties:
+        id:
+          type: integer
+          example: 1
+        address_line_1:
+          type: string
+          example: "123 Main St"
+        address_line_2:
+          type: string
+          example: "Apt 4B"
+        postcode:
+          type: string
+          example: "90210"
+    UserPaymentMethodType:
+      type: string
+      enum:
+        - CREDIT_CARD
+        - PAYPAL
+      example: CREDIT_CARD
+
+    PostUserPaymentMethodDto:
+      type: object
+      properties:
+        type:
+          $ref: "#/components/schemas/UserPaymentMethodType"
+        card_number:
+          type: string
+          example: "4111111111111111"
+        cardholder_name:
+          type: string
+          example: "John Doe"
+        security_code:
+          type: string
+          example: "123"
+        expiry_month:
+          type: integer
+          minimum: 1
+          maximum: 12
+          example: 12
+        expiry_year:
+          type: integer
+          example: 2025
+        paypal_email:
+          type: string
+          format: email
+          example: "user@paypal.com"
+      required:
+        - type
+
+    GetUserPaymentMethodResponseDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        type:
+          $ref: "#/components/schemas/UserPaymentMethodType"
+        card_number:
+          type: string
+          example: "4111111111111111"
+        cardholder_name:
+          type: string
+          example: "John Doe"
+        expiry_month:
+          type: string
+          example: "12"
+        expiry_year:
+          type: string
+          example: "2025"
+        paypal_email:
+          type: string
+          format: email
+          example: "user@paypal.com"
+        user_id:
+          type: integer
+          example: 123
+
+    GetUserPaymentMethodsResponseDto:
+      type: array
+      items:
+        $ref: "#/components/schemas/GetUserPaymentMethodResponseDto"
+
+    PutUserPaymentMethodDto:
+      type: object
+      properties:
+        type:
+          $ref: "#/components/schemas/UserPaymentMethodType"
+        card_number:
+          type: string
+          example: "4111111111111111"
+        cardholder_name:
+          type: string
+          example: "John Doe"
+        security_code:
+          type: string
+          example: "123"
+        expiry_month:
+          type: integer
+          minimum: 1
+          maximum: 12
+          example: 12
+        expiry_year:
+          type: integer
+          example: 2025
+        paypal_email:
+          type: string
+          format: email
+          example: "user@paypal.com"
+      required:
+        - type
+    GetUserSubscriptionPlanDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: Monthly
+        price:
+          type: string
+          example: "9.99"
+        duration_days:
+          type: integer
+          example: 30
+    GetUserSubscriptionPlansDto:
+      type: array
+      items:
+        $ref: "#/components/schemas/GetUserSubscriptionPlanDto"
+    PostProductDto:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "product one"
+        description:
+          type: string
+          example: "A high-quality product"
+        price:
+          type: number
+          format: float
+          example: 29.99
+        stock:
+          type: integer
+          example: 100
+        image_url:
+          type: string
+          example: "https://example.com/images/product1.jpg"
+        product_category_ids:
+          type: array
+          items:
+            type: integer
+          example: [1, 2]
+        product_option_ids:
+          type: array
+          items:
+            type: integer
+          example: [10, 11]
+      required:
+        - name
+        - description
+        - price
+        - stock
+        - image_url
+        - product_category_ids
+        - product_option_ids
+    GetProductResponseDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: "Product One"
+        description:
+          type: string
+          example: "A high-quality product with excellent features."
+        price:
+          type: number
+          format: float
+          example: 49.99
+        stock:
+          type: integer
+          example: 100
+        image_url:
+          type: string
+          example: "https://example.com/images/product1.jpg"
+        created_at:
+          type: string
+          format: date-time
+          example: "2025-09-30T12:34:56Z"
+      required:
+        - id
+        - name
+        - description
+        - price
+        - stock
+        - image_url
+        - created_at
+    GetProductsResponseDto:
+      type: array
+      items:
+        $ref: "#/components/schemas/GetProductResponseDto"
+    PutProductDto:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Updated Product Name"
+        description:
+          type: string
+          example: "Updated description of the product."
+        price:
+          type: number
+          format: float
+          example: 49.99
+        stock:
+          type: integer
+          example: 25
+        image_url:
+          type: string
+          example: "https://example.com/images/product_updated.jpg"
+        product_category_ids:
+          type: array
+          items:
+            type: integer
+          example: [1, 3, 5]
+      required:
+        - name
+        - description
+        - price
+        - stock
+        - image_url
+        - product_category_ids
+    GetProductReviewsResponseDto:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: integer
+            example: 42
+          user_id:
+            type: integer
+            example: 5
+          product_id:
+            type: integer
+            example: 7
+          rating:
+            type: number
+            format: float
+            minimum: 0
+            maximum: 5
+            example: 4.5
+          comment:
+            type: string
+            nullable: true
+            example: "Really liked this product, would buy again."
+          created_at:
+            type: string
+            format: date-time
+            example: "2025-09-28T14:32:00Z"
+          name:
+            type: string
+            description: Name of the user who wrote the review
+            example: "Alice Johnson"
+        required:
+          - id
+          - user_id
+          - product_id
+          - rating
+          - created_at
+          - name
+    GetProductCategoriesResponseDto:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: integer
+            example: 1
+          name:
+            type: string
+            example: "Electronics"
+        required:
+          - id
+          - name
